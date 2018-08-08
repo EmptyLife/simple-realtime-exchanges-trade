@@ -12,6 +12,8 @@
     "simple-bitmex-realtime": "EmptyLife/simple-bitmex-realtime",
     "simple-realtime-helper-heartbeat": "EmptyLife/simple-realtime-helper-heartbeat",
 	
+	"simple-pusher-wrapper": "EmptyLife/simple-pusher-wrapper",
+	
     "pusher-js": "latest",
     "pako": "latest"
   },
