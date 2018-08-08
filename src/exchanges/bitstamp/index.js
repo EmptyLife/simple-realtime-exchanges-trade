@@ -1,6 +1,6 @@
 
 const EventEmitter = require('events')
-const Pusher = require('pusher-js');
+const Pusher = require("simple-pusher-wrapper");
 const {TimeNormalize} = require("../../lib/exchange");
 
 const BITSTAMP_PUSHER_ID = "de504dc5763aeef9ff52";
