@@ -1,0 +1,20 @@
+{
+  "name": "simple-realtime-exchanges-trade",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "simple-web-socket-client-reconnect": "EmptyLife/simple-web-socket-client-reconnect",
+    "simple-bitmex-realtime": "EmptyLife/simple-bitmex-realtime",
+    "simple-realtime-helper-heartbeat": "EmptyLife/simple-realtime-helper-heartbeat",
+	
+    "pusher-js": "latest",
+    "pako": "latest"
+  },
+  "author": "EmptyLife",
+  "license": "ISC"
+}
