@@ -24,7 +24,7 @@ class Realtime extends RealtimePrototype {
 		
 		///////////////////////
 		this.on("_:send:ping", () => {
-			this.isOpened() && this.sendText(this.PINGID);
+			this.isOpened() && this.sendText("ping-text-expected-error-adherhgso");
 		});
 		rpc.on("error", (error) => {
 			( error.code === 1 && error.message === "Invalid json" ) && this.emit("_:recv:pong");
