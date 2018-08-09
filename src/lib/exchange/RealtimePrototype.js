@@ -30,7 +30,7 @@ class RealtimePrototype extends EmitTrade {
 				isObj && this.emit("message:json", obj);
 				this.emit("message:text", msg);
 			} else {
-				this.emit("message:binnary", msg);
+				this.emit("message:binary", msg);
 			}
 			
 			this.emit("message", msg);
@@ -67,7 +67,7 @@ class RealtimePrototype extends EmitTrade {
 	sendJson(msg) {
 		this._webSocket.send(JSON.stringify(msg));
 	}
-	sendBinnary(msg) {
+	sendBinary(msg) {
 		this._webSocket.send(msg);
 	}
 

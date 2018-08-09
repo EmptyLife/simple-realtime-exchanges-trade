@@ -7,7 +7,10 @@ const JsonRPC2_Client = require("./lib/JsonRPC2_Client");
 const URL = "wss://api.hitbtc.com/api/2/ws";
 class Realtime extends RealtimePrototype {
 	constructor(options) {
-		super(URL, options);
+		super(URL, {
+			ping_timeout: 15e3,
+			...options
+		});
 		
 		const rpc = new JsonRPC2_Client(this);
 		rpc.on("error", (error) => 0);

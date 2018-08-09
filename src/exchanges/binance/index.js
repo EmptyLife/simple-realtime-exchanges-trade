@@ -1,7 +1,6 @@
 
 const EventEmitter = require('events')
 const {RealtimePrototype, Heartbeat, ExchangeOptions} = require("../../lib/exchange");
-const pako = require('pako')
 
 
 const URL = "wss://stream.binance.com:9443/stream?streams=";
@@ -20,6 +19,8 @@ class Realtime extends RealtimePrototype {
 			...options,
 			heartbeat: false
 		});
+		
+		this.on("message:json", this._parseMsg.bind(this));
 	}
 	
 	_parseMsg(msg) {

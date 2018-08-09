@@ -49,24 +49,25 @@ class ExchangesRealtime extends EventEmitter {
 		
 		const exchangeInst = new exchange(options);
 		
-		for(let table in exchangeOptions) {
+		for(const table in exchangeOptions) {
 			const symbols = exchangeOptions[table];
+			const tableRealtime = table + "-realtime";
 			for(const symbol of symbols) {
-				const info = {event: table, exchange: exchangeName, symbol};
-				exchangeInst.on(`${table}:${symbol}`, (data) => {
-					this.emit(`${table}:${exchangeName}:${symbol}`, info, data);
-					this.emit(`${table}:${exchangeName}:*`, info, data);
-					this.emit(`${table}:*:*`, info, data);
-					this.emit(`any`, info, data);
-				});
-				
 				{
-					table += "-realtime";
 					const info = {event: table, exchange: exchangeName, symbol};
-					exchangeInst.on(`${table}:${symbol}`, (data) => {
-						this.emit(`${table}:${exchangeName}:${symbol}`, info, data);
-						this.emit(`${table}:${exchangeName}:*`, info, data);
-						this.emit(`${table}:*:*`, info, data);
+					exchangeInst.on(`${info.event}:${symbol}`, (data) => {
+						this.emit(`${info.event}:${info.exchange}:${symbol}`, info, data);
+						this.emit(`${info.event}:${info.exchange}:*`, info, data);
+						this.emit(`${info.event}:*:*`, info, data);
+						this.emit(`any`, info, data);
+					});
+				}
+				{
+					const info = {event: tableRealtime, exchange: exchangeName, symbol};
+					exchangeInst.on(`${info.event}:${symbol}`, (data) => {
+						this.emit(`${info.event}:${info.exchange}:${symbol}`, info, data);
+						this.emit(`${info.event}:${info.exchange}:*`, info, data);
+						this.emit(`${info.event}:*:*`, info, data);
 						this.emit(`any`, info, data);
 					});
 				}

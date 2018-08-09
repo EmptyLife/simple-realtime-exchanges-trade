@@ -28,17 +28,19 @@ class EmitTrade extends EventEmitter {
 	_emitTradeRealtime(symbol, array) {
 		if ( !array.length ) {return;}
 		
-		//this._emitTradeContext.emitTradeCount++;
-		//if ( this._emitTradeContext.emitTradeCount <= MIN_EMIT_TRADE_COUNT ) {return;}
+		this._emitTradeContext.emitTradeCount++;
+		if ( this._emitTradeContext.emitTradeCount <= MIN_EMIT_TRADE_COUNT ) {
+			return;
+		}
 		
-		if ( !this._emitTradeContext.openedTime ) {return;}
+		if ( !this._emitTradeContext.openedTime ) {
+			return;
+		}
 		
 		if ( array[0][2] <= this._emitTradeContext.openedTime ) {
-			console.log("skip old ata", symbol, new Date(array[0][2]), new Date(this._emitTradeContext.openedTime) );
 			return;
 		}
 
-		console.log("go to");
 			
 		this.emit(`trade-realtime:${symbol}`, array, symbol);
 		this.emit(`trade-realtime:*`, array, symbol);
