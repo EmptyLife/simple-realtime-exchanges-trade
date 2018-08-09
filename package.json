@@ -14,7 +14,6 @@
 	
 	"simple-pusher-wrapper": "EmptyLife/simple-pusher-wrapper",
 	
-    "pusher-js": "latest",
     "pako": "latest"
   },
   "author": "EmptyLife",

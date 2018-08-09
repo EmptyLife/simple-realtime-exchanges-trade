@@ -85,7 +85,7 @@ class Realtime extends RealtimePrototype {
 			])
 		}
 		
-		this.emit(`trade:${symbol}`, dstArray, symbol);
+		this.emitTrade(symbol, dstArray);
 	}
 }
 

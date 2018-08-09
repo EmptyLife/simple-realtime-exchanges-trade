@@ -1,19 +1,13 @@
 
 const EventEmitter = require('events')
-const {RealtimePrototype, Heartbeat} = require("../../lib/exchange");
+const {RealtimePrototype, Heartbeat, ExchangeOptions} = require("../../lib/exchange");
 const pako = require('pako')
 
 
 const URL = "wss://stream.binance.com:9443/stream?streams=";
 class Realtime extends RealtimePrototype {
 	constructor(options) {
-		options = {
-			...options,
-			subscribe: {
-				trade: [],
-				...options.subscribe
-			}
-		};
+		options = new ExchangeOptions(options);
 		
 		const newUrl = URL + ["trade"].map(event => {
 			const symbols = options.subscribe[event] || [];
@@ -22,7 +16,6 @@ class Realtime extends RealtimePrototype {
 			}).join("/");
 		}).filter(s => s.length).join("/");
 		
-		console.log(newUrl);
 		super(newUrl, {
 			...options,
 			heartbeat: false
@@ -50,7 +43,7 @@ class Realtime extends RealtimePrototype {
 			Date.now()
 		];
 
-		this.emit(`trade:${symbol}`, [trade]);
+		this.emitTrade(symbol, [trade]);
 	}
 }
 

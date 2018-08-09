@@ -25,20 +25,13 @@ methods
 
 const SimpleBitmexRealtime = require("simple-bitmex-realtime")
 const EventEmitter = require("events")
+const {EmitTrade, ExchangeOptions} = require("../../lib/exchange");
 
-class Realtime extends EventEmitter {
+class Realtime extends EmitTrade {
 	constructor(options) {
 		super();
 		
-		this.options = {
-			reconnect: true,
-			...options,
-			
-			subscribe: {
-				trade: [],
-				...options.subscribe
-			},
-		};
+		this.options = new ExchangeOptions(options);
 		
 		this.realtime = new SimpleBitmexRealtime({reconnect: this.options.reconnect});
 		
@@ -69,10 +62,9 @@ class Realtime extends EventEmitter {
 				realtime ? Date.now() : 0,
 				item.size
 			]);
-			
 		}
 
-		this.emit(`trade:${symbol}`, dstArray, symbol);
+		this.emitTrade(symbol, dstArray);
 	}
 	
 	isOpened(...args) {return this.realtime.isOpened(...args);}

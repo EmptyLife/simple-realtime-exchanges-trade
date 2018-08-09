@@ -45,7 +45,7 @@ class Realtime extends RealtimePrototype {
 				Date.now()
 			];
 
-			this.emit(`trade:${symbol}`, [trade]);
+			this.emitTrade(symbol, [trade]);
 		} else if ( msg.type === "error" ) {
 			if ( msg.original === this.PINGID ) {
 				this.emit("_:recv:pong");

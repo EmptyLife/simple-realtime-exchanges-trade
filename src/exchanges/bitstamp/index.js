@@ -1,24 +1,16 @@
 
 const EventEmitter = require('events')
 const Pusher = require("simple-pusher-wrapper");
-const {TimeNormalize} = require("../../lib/exchange");
+const {TimeNormalize, EmitTrade, ExchangeOptions} = require("../../lib/exchange");
 
 const BITSTAMP_PUSHER_ID = "de504dc5763aeef9ff52";
 
 
-class Realtime extends EventEmitter {
+class Realtime extends EmitTrade {
 	constructor(options) {
 		super();
 		
-		this.options = {
-			reconnect: true,
-			...options,
-			
-			subscribe: {
-				trade: [],
-				...options.subscribe,
-			}
-		};
+		this.options = new ExchangeOptions(options);
 
 		this._state = "initialized";
 		this._openFn = () => {
@@ -77,7 +69,7 @@ class Realtime extends EventEmitter {
 				Date.now()
 			];
 			
-			this.emit(`trade:${symbol}`, [trade]);
+			this.emitTrade(symbol, [trade]);
         });
 		
 		channel.bind("pusher:subscription_succeeded", (...args) => {

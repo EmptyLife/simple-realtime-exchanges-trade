@@ -3,29 +3,15 @@ const SimpleWebSocket = require('simple-web-socket-client-reconnect');
 const assert = require("assert")
 const EventEmitter = require("events")
 const Heartbeat = require("simple-realtime-helper-heartbeat")
+const ExchangeOptions = require("./ExchangeOptions")
+const EmitTrade = require("./EmitTrade")
 
-		
 
-class RealtimePrototype extends EventEmitter {
+class RealtimePrototype extends EmitTrade {
 	constructor(url, options) {
 		super();
 		
-		this.options = {
-			reconnect: true,
-			
-			heartbeat: true,
-			msg_timeout: 5e3,
-			ping_timeout: 5e3,
-			ping_timeinterval: 1e3,
-			
-			...options,
-			
-			subscribe: {
-				trade: [],
-				
-				...options.subscribe
-			}
-		};	
+		this.options = new ExchangeOptions(options);
 
 		this._webSocket = new SimpleWebSocket(url, {reconnect: this.options.reconnect});
 		

@@ -40,10 +40,9 @@ class Realtime extends RealtimePrototype {
 			const array = [];
 			for(const item of msg.data) {
 				let trade = [
-					+item.price, 
-					+item.quantity, 
+					+item.price,
 					item.side === "sell" ? -+item.quantity : +item.quantity,
-					+new Date(item.timestamp), 
+					+new Date(item.timestamp),
 					Date.now()
 				];
 				
@@ -55,7 +54,7 @@ class Realtime extends RealtimePrototype {
 		const symbol = msg.symbol;
 		const array = toArray(msg);
 
-		this.emit(`trade:${symbol}`, array);
+		this.emitTrade(symbol, array);
 	}
 }
 

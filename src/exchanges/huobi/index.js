@@ -1,72 +1,91 @@
 
 const EventEmitter = require('events')
 const {RealtimePrototype} = require("../../lib/exchange");
-const pako = require('pako')
 
-
-
-const URL = "wss://api.huobi.pro/ws";
+const URL = "wss://api.bitfinex.com/ws/2";
 class Realtime extends RealtimePrototype {
 	constructor(options) {
 		super(URL, options);
 
 		
-		
-		///////////////////////
-		this.on("_:send:ping", () => {
-			this.isOpened() && this.sendJson({ping: Date.now()});
-		});
-		
+		this.pairOfChannelId = new Map();
+
 		this.on("open", () => {
+			this.pairOfChannelId.clear();
+			
 			for(let symbol of this.options.subscribe.trade) {
-				symbol = symbol.toLowerCase();
-				this.sendJson({"sub": `market.${symbol}.trade.detail`, "id": `${symbol}`});
+				symbol = symbol.toUpperCase();
+				
+				this.sendJson({ 
+					event  : 'subscribe', 
+					channel: 'trades', 
+					pair : symbol,
+				});
 			}
 		});
 
-		this.on("message", (msg) => {
-			try {
-				let text = pako.inflate(msg, {to: 'string'});
-				//console.log(text);
-		
-				msg = JSON.parse(text);
-				if ( msg.ping ) {
-					this.isOpened() && this.sendJson({pong: msg.ping});
-				} else if ( msg.pong ) {
-					this.emit("_:recv:pong", msg);
-				} else if ( msg.tick ) {
-					this._parse(msg);
-				} else {
+		this.on("message:json", (msg) => {
+			if ( Array.isArray(msg) ) {
+				this._parseDataArray(msg);
+			} else if ( msg instanceof Object ) {
+				if ( "event" in msg ) {
+					this._parseEvent(msg);
 				}
-				
-			} catch(e) {}
+			}
+		});
+		
+		///////////////////////
+		this.on("_:send:ping", () => {
+			this.isOpened() && this.sendJson({event: "ping", cid: Date.now()});
 		});
 	}
+
+	_sendPing() {
+		this.isOpened() && this.sendJson({event: "ping", cid: Date.now()});
+	}
 	
-	_parse(msg) {
-		let [type, symbol, channel] = msg.ch.split('.');
+	_parseEvent(msg) {
+		if ( msg.event === "subscribed" ) {
+			this.pairOfChannelId.set(msg.chanId, msg);
+		}
 		
-		symbol = symbol.toUpperCase();
-		
-		switch(channel) {
-			case "trade":
-				this._parseTrade(symbol, msg.tick.data);
-				break;
-				
+		if ( msg.event === "ping" ) {
+			this.isOpened() && this.sendJson({event: "pong", ts: Date.now(), cid: msg.cid});
+		}
+		if ( msg.event === "pong" ) {
+			this.emit("_:recv:pong", msg);
 		}
 	}
-	_parseTrade(symbol, srcArray) {
+	_parseDataArray(msg) {
+		const info = this.pairOfChannelId.get(msg[0]);
+		if ( info ) {
+			
+			if ( info.channel === "trades" ) {
+				if ( Array.isArray(msg[1]) ) {
+					this._insertTradeArray(msg[1], info.pair, false);
+				} else {
+					switch(msg[1]) {
+						case "te":
+							this._insertTradeArray([msg[2]], info.pair, true);
+							break;
+					}
+				}
+			}
+			
+		}
+	}
+	_insertTradeArray(srcArray, symbol, realtime = true) {
 		const dstArray = [];
 		for(const trade of srcArray) {
 			dstArray.push([
-				+trade.price,
-				trade.direction === "sell" ? -trade.amount : trade.amount,
-				+new Date(trade.ts), 
-				Date.now()
-			]);
+				+trade[3],
+				+trade[2],
+				+trade[1],
+				Date.now(),
+			])
 		}
 		
-		this.emit(`trade:${symbol}`, dstArray, symbol);
+		this.emitTrade(symbol, dstArray);
 	}
 }
 

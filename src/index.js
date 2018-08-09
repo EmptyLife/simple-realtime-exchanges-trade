@@ -49,7 +49,7 @@ class ExchangesRealtime extends EventEmitter {
 		
 		const exchangeInst = new exchange(options);
 		
-		for(const table in exchangeOptions) {
+		for(let table in exchangeOptions) {
 			const symbols = exchangeOptions[table];
 			for(const symbol of symbols) {
 				const info = {event: table, exchange: exchangeName, symbol};
@@ -59,6 +59,17 @@ class ExchangesRealtime extends EventEmitter {
 					this.emit(`${table}:*:*`, info, data);
 					this.emit(`any`, info, data);
 				});
+				
+				{
+					table += "-realtime";
+					const info = {event: table, exchange: exchangeName, symbol};
+					exchangeInst.on(`${table}:${symbol}`, (data) => {
+						this.emit(`${table}:${exchangeName}:${symbol}`, info, data);
+						this.emit(`${table}:${exchangeName}:*`, info, data);
+						this.emit(`${table}:*:*`, info, data);
+						this.emit(`any`, info, data);
+					});
+				}
 			}
 		}
 		
