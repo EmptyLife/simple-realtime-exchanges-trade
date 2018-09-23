@@ -10,9 +10,10 @@
   "dependencies": {
     "simple-web-socket-client-reconnect": "EmptyLife/simple-web-socket-client-reconnect",
     "simple-bitmex-realtime": "EmptyLife/simple-bitmex-realtime",
+    "simple-deribit-realtime": "EmptyLife/simple-deribit-realtime",
     "simple-realtime-helper-heartbeat": "EmptyLife/simple-realtime-helper-heartbeat",
 	
-	"simple-pusher-wrapper": "EmptyLife/simple-pusher-wrapper",
+    "simple-pusher-wrapper": "EmptyLife/simple-pusher-wrapper",
 	
     "pako": "latest"
   },
